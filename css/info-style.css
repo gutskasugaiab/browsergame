@@ -1,0 +1,182 @@
+/* 全体 */
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #fff;
+    color: #333;
+}
+
+/* ヘッダー */
+header {
+    background: #1abc9c;
+    text-align: center;
+    padding: 5px;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.nav ul {
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    width: 75%;
+}
+
+.nav a {
+    margin-left: 15px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav a:hover {
+    text-decoration: underline;
+}
+
+/* メイン */
+main {
+    padding: 20px;
+}
+
+/* フッター */
+footer {
+    background: #1abc9c;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 28px;
+}
+
+/* タイムライン */
+/* 更新履歴 */
+.timeline {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    padding-left: 20px;
+}
+
+/* 縦線 */
+.timeline::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: #ddd;
+}
+
+/* 各項目 */
+.entry {
+    margin-bottom: 25px;
+    padding-left: 20px;
+    position: relative;
+}
+
+/* 丸 */
+.entry::before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    background: #1abc9c;
+    border-radius: 50%;
+}
+
+/* 日付 */
+.date {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+/* 内容 */
+.text {
+    background: #fff;
+    padding: 12px 15px;
+    border-radius: 10px;
+    line-height: 1.6;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+}
+
+/* NEWバッジ */
+.new {
+    display: inline-block;
+    font-size: 11px;
+    background: #1abc9c;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+}
+
+/* 2カラム */
+.container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* 左（メイン） */
+.content {
+    flex: 3;
+}
+
+/* 右（サイドバー） */
+.sidebar {
+    flex: 1;
+}
+
+/* サイド広告 */
+.side-ad {
+    margin-bottom: 20px;
+}
+
+.side-ad img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.ad-label {
+    font-size: 12px;
+    color: gray;
+}
+
+/* スマホ対応（超重要） */
+@media (max-width: 768px) {
+    .nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        margin-top: 20px;
+    }
+
+    .sidebar {
+        order: 2;
+    }
+
+    .side-ad {
+        margin-bottom: 15px;
+    }
+}
