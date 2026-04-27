@@ -266,7 +266,7 @@
         }
 
         body.home {
-            background: url("../img/タイトル画面.png") no-repeat;
+            background: url("../img/2/タイトル画面.png") no-repeat;
             background-size: cover;
             background-position: center top;
         }
@@ -293,49 +293,49 @@
         }
 
         body.training {
-            background: url("../img/訓練場ぼかし.png") no-repeat;
+            background: url("../img/2/訓練場ぼかし.png") no-repeat;
             background-size: cover;
             background-position: center top;
         }
 
         body.house {
-            background: url("../img/タイトル画面.png") no-repeat;
+            background: url("../img/2/タイトル画面.png") no-repeat;
             background-size: cover;
             background-position: center top;
         }
 
         body.field {
-            background: url("../img/草原ぼかし.png") no-repeat;
+            background: url("../img/2/草原ぼかし.png") no-repeat;
             background-size: cover;
             background-position: center top;
         }
 
         body.forest {
-            background: url(../img/森ぼかし.png) no-repeat;
+            background: url(../img/2/森ぼかし.png) no-repeat;
             background-size: cover;
             background-position: center top;
         }
 
         body.castle {
-            background: url(../img/魔王の城の前ぼかし.png) no-repeat;
+            background: url(../img/2/魔王の城の前ぼかし.png) no-repeat;
             background-size: cover;
             background-position: center top;
         }
 
         body.king {
-            background: url(../img/魔王の間ぼかし.png) no-repeat;
+            background: url(../img/2/魔王の間ぼかし.png) no-repeat;
             background-size: cover;
             background-position: center top;
         }
 
         body.king2 {
-            background: url(../img/最後の間ぼかし.png) no-repeat;
+            background: url(../img/2/最後の間ぼかし.png) no-repeat;
             background-size: cover;
             background-position: center top;
         }
 
         body.king3 {
-            background: url(../img/最後の間.png) no-repeat;
+            background: url(../img/2/最後の間.png) no-repeat;
             background-size: cover;
             background-position: center;
         }
@@ -629,7 +629,7 @@
         }
 
         body.gameoverBG {
-            background: url("../img/ゲームオーバー.png") no-repeat;
+            background: url("../img/2/ゲームオーバー.png") no-repeat;
             background-size: cover;
             background-position: center top;
         }
@@ -686,7 +686,7 @@
         }
 
         body.clearBG {
-            background: url("../img/ゲームクリア.png") no-repeat;
+            background: url("../img/2/ゲームクリア.png") no-repeat;
             background-size: cover;
             background-position: center top;
         }
@@ -772,8 +772,8 @@
 
             <!-- 上の敵表示 -->
             <div id="enemyWrapper">
-                <img id="bgImg" src="../img/草原.png">
-                <img id="enemyImg" src="../img/スライムと草原.png">
+                <img id="bgImg" src="../img/2/草原.png">
+                <img id="enemyImg" src="../img/2/スライムと草原.png">
             </div>
 
             <!-- 敵HP -->
@@ -951,35 +951,35 @@
             }
             // ===== 草原ステージ =====
             if (stage === 0 && storyIndex <= 1) {
-                img.src = "../img/旅立ち.png"; // 草原シーン１
+                img.src = "../img/2/旅立ち.png"; // 草原シーン１
             } else if (stage === 0 && storyIndex === 2) {
-                img.src = "../img/草原.png"; // 草原シーン２
+                img.src = "../img/2/草原.png"; // 草原シーン２
             } else if (stage === 0 && storyIndex === 3) {
-                img.src = "../img/スライムと草原.png"; // 草原シーン３
+                img.src = "../img/2/スライムと草原.png"; // 草原シーン３
                 img.classList.add("shake"); // ちょっと揺らす
                 setTimeout(() => img.classList.remove("shake"), 300);
             } else if (stage === 0 && storyIndex === 4) {
-                img.src = "../img/スライムと草原.png"; // 草原シーン４
+                img.src = "../img/2/スライムと草原.png"; // 草原シーン４
             }
             // ===== 森ステージ =====
             else if (stage === 2 && storyIndex === 0) {
-                img.src = "../img/森.png"; // 森シーン１
+                img.src = "../img/2/森.png"; // 森シーン１
             } else if (stage === 2 && storyIndex === 1) {
-                img.src = "../img/森とゴブリン.png"; // 森シーン２
+                img.src = "../img/2/森とゴブリン.png"; // 森シーン２
                 img.classList.add("shake"); // ちょっと揺らす
                 setTimeout(() => img.classList.remove("shake"), 300);
             } else if (stage === 2 && storyIndex === 2) {
-                img.src = "../img/森とゴブリン.png"; // 森シーン３
+                img.src = "../img/2/森とゴブリン.png"; // 森シーン３
             }
             // ===== 魔王の城の前ステージ =====
             else if (stage === 4 && storyIndex === 0) {
-                img.src = "../img/魔王の城の前.png"; // 城前シーン１
+                img.src = "../img/2/魔王の城の前.png"; // 城前シーン１
             } else if (stage === 4 && storyIndex === 1) {
-                img.src = "../img/城の前とガーディアン.png"; // 城前シーン２
+                img.src = "../img/2/城の前とガーディアン.png"; // 城前シーン２
                 img.classList.add("shake"); // ちょっと揺らす
                 setTimeout(() => img.classList.remove("shake"), 300);
             } else if (stage === 4 && storyIndex === 2) {
-                img.src = "../img/城の前とガーディアン.png"; // 城前シーン３
+                img.src = "../img/2/城の前とガーディアン.png"; // 城前シーン３
             }
 
             if (stage === 5 && storyIndex === 3) {
@@ -998,25 +998,25 @@
 
             // ===== 魔王の間ステージ =====
             else if (stage === 6 && storyIndex === 0) {
-                img.src = "../img/魔王の間.png"; // 魔王の間シーン１
+                img.src = "../img/2/魔王の間.png"; // 魔王の間シーン１
             } else if (stage === 6 && storyIndex === 1) {
-                img.src = "../img/魔王の間と魔王.png"; // 魔王の間シーン２
+                img.src = "../img/2/魔王の間と魔王.png"; // 魔王の間シーン２
                 img.classList.add("shake"); // ちょっと揺らす
                 setTimeout(() => img.classList.remove("shake"), 300);
             } else if (stage === 6 && storyIndex === 2) {
-                img.src = "../img/魔王の間と魔王.png"; // 魔王の間シーン３
+                img.src = "../img/2/魔王の間と魔王.png"; // 魔王の間シーン３
             } else if (stage === 6 && storyIndex === 3) {
-                img.src = "../img/魔王の間と魔王.png"; // 魔王の間シーン４
+                img.src = "../img/2/魔王の間と魔王.png"; // 魔王の間シーン４
             } else if (stage === 6 && storyIndex === 4) {
-                img.src = "../img/魔王の間と魔王.png"; // 魔王の間シーン５
+                img.src = "../img/2/魔王の間と魔王.png"; // 魔王の間シーン５
             } else if (stage === 6 && storyIndex === 5) {
-                img.src = "../img/魔王の間と魔王.png"; // 魔王の間シーン６
+                img.src = "../img/2/魔王の間と魔王.png"; // 魔王の間シーン６
             }
 
             // セリフに応じて画像変化（変身演出）
             if (stage === 7 && storyIndex === 1) {
                 const img = document.getElementById("heroImg");
-                img.src = "../img/最後の間と魔王２.png";
+                img.src = "../img/2/最後の間と魔王２.png";
 
                 img.classList.add("shake"); // 変身の揺れ演出
                 setTimeout(() => img.classList.remove("shake"), 300);
@@ -1035,7 +1035,7 @@
 
             if (isPracticeMode && storyIndex === 2) {
                 setBG("training");
-                img.src = "../img/訓練場とカカシ.png";
+                img.src = "../img/2/訓練場とカカシ.png";
             }
 
             typeText(story[storyIndex], "storyText");
@@ -1149,7 +1149,7 @@
                     "スライムを倒した！",
                     "先へ進もう！"
                 ];
-                document.getElementById("heroImg").src = "../img/草原.png";
+                document.getElementById("heroImg").src = "../img/2/草原.png";
             }
 
             else if (stage === 2) {
@@ -1159,7 +1159,7 @@
                     "ゴブリンがあらわれた！",
                     "ゴブリン『グギャァ！』"
                 ];
-                document.getElementById("heroImg").src = "../img/森.png";
+                document.getElementById("heroImg").src = "../img/2/森.png";
             }
 
             else if (stage === 3) {
@@ -1168,7 +1168,7 @@
                     "ゴブリンを倒した！",
                     "魔王の城はもうすぐだ...",
                     "先へ進もう！"];
-                document.getElementById("heroImg").src = "../img/森.png";
+                document.getElementById("heroImg").src = "../img/2/森.png";
             }
 
             else if (stage === 4) {
@@ -1177,7 +1177,7 @@
                     "魔王の城の前へやってきた！",
                     "ガーディアンがあらわれた！",
                     "ガーディアン『侵入者排除...』"];
-                document.getElementById("heroImg").src = "../img/魔王の城の前.png";
+                document.getElementById("heroImg").src = "../img/2/魔王の城の前.png";
             }
             else if (stage === 5) {
                 setBG("castle");
@@ -1187,7 +1187,7 @@
                     "ポーションを見つけた！",
                     "HPが全回復した！",
                     "よし、魔王はこの城の中だ！"];
-                document.getElementById("heroImg").src = "../img/魔王の城の前.png";
+                document.getElementById("heroImg").src = "../img/2/魔王の城の前.png";
             }
 
             else if (stage === 6) {
@@ -1199,7 +1199,7 @@
                     "魔王『フン。我を倒すなどと笑わせるな羽虫が』",
                     "魔王『いいだろう。お前を試してやろう！』",
                     "最後の戦いがいま、始まる———"];
-                document.getElementById("heroImg").src = "../img/魔王の間.png";
+                document.getElementById("heroImg").src = "../img/2/魔王の間.png";
             }
 
             else if (stage === 7) {
@@ -1239,8 +1239,8 @@
                 const enemy = document.getElementById("enemyImg");
                 const bgImg = document.getElementById("bgImg");
 
-                bgImg.src = "../img/訓練場ぼかし.png";
-                enemy.src = "../img/訓練場とカカシ.png";
+                bgImg.src = "../img/2/訓練場ぼかし.png";
+                enemy.src = "../img/2/訓練場とカカシ.png";
 
                 enemyHP = Infinity;
                 enemyMax = Infinity;
@@ -1266,28 +1266,28 @@
 
             // ▼ここ追加が本体🔥
             if (name === "スライム") {
-                bgImg.src = "../img/草原.png";
-                enemy.src = "../img/スライムと草原.png";
+                bgImg.src = "../img/2/草原.png";
+                enemy.src = "../img/2/スライムと草原.png";
             }
 
             else if (name === "ゴブリン") {
-                bgImg.src = "../img/森.png";
-                enemy.src = "../img/森とゴブリン.png";
+                bgImg.src = "../img/2/森.png";
+                enemy.src = "../img/2/森とゴブリン.png";
             }
 
             else if (name === "ガーディアン") {
-                bgImg.src = "../img/魔王の城の前.png";
-                enemy.src = "../img/城の前とガーディアン.png";
+                bgImg.src = "../img/2/魔王の城の前.png";
+                enemy.src = "../img/2/城の前とガーディアン.png";
             }
 
             else if (name === "魔王２") {
-                bgImg.src = "../img/最後の間.png";
-                enemy.src = "../img/最後の間と魔王２.png";
+                bgImg.src = "../img/2/最後の間.png";
+                enemy.src = "../img/2/最後の間と魔王２.png";
             }
 
             else if (name.includes("魔王")) {
-                bgImg.src = "../img/魔王の間.png";
-                enemy.src = "../img/魔王の間と魔王.png";
+                bgImg.src = "../img/2/魔王の間.png";
+                enemy.src = "../img/2/魔王の間と魔王.png";
             }
 
             updateHP();
@@ -1631,7 +1631,7 @@
         function transformBoss() {
             document.body.classList.add("slowFlash");
 
-            document.getElementById("heroImg").src = "../img/魔王の間と魔王.png";
+            document.getElementById("heroImg").src = "../img/2/魔王の間と魔王.png";
             document.getElementById("story").classList.remove("hidden");
             document.getElementById("battle").classList.add("hidden");
 

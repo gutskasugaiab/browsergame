@@ -221,9 +221,9 @@
 
     <div id="start-screen">
         <div class="title-container">
-            <img src="../img/icon-left.png" class="title-icon" alt="icon">
+            <img src="../img/3/icon-left.png" class="title-icon" alt="icon">
             <div id="game-title">ファウンデイション<br>タイピング</div>
-            <img src="../img/icon-right.png" class="title-icon" alt="icon">
+            <img src="../img/3/icon-right.png" class="title-icon" alt="icon">
         </div>
         <div id="game-desc">
             ランダムで表示される「キー」の画像を見て<br>
@@ -262,15 +262,15 @@
 
     <script>
         const keyList = [
-            { display: 'Shift（シフト）', key: 'Shift', img: '../img/shift.png' },
-            { display: 'Alt（オルト）', key: 'Alt', img: '../img/alt.png' },
-            { display: 'Ctrl(コントロール)', key: 'Control', img: '../img/ctrl.png' },
-            { display: 'Enter（エンター）', key: 'Enter', img: '../img/enter.png' },
-            { display: 'Backspace（バックスペース）', key: 'Backspace', img: '../img/backspace.png' },
-            { display: 'Space（スペース）', key: ' ', img: '../img/space.png' },
-            { display: 'Tab（タブ）', key: 'Tab', img: '../img/tab.png' },
-            { display: 'Esc（エスケープ）', key: 'Escape', img: '../img/esc.png' },
-            { display: 'Delete（デリート）', key: 'Delete', img: '../img/delete.png' }
+            { display: 'Shift（シフト）', key: 'Shift', img: '../img/3/shift.png' },
+            { display: 'Alt（オルト）', key: 'Alt', img: '../img/3/alt.png' },
+            { display: 'Ctrl(コントロール)', key: 'Control', img: '../img/3/ctrl.png' },
+            { display: 'Enter（エンター）', key: 'Enter', img: '../img/3/enter.png' },
+            { display: 'Backspace（バックスペース）', key: 'Backspace', img: '../img/3/backspace.png' },
+            { display: 'Space（スペース）', key: ' ', img: '../img/3/space.png' },
+            { display: 'Tab（タブ）', key: 'Tab', img: '../img/3/tab.png' },
+            { display: 'Esc（エスケープ）', key: 'Escape', img: '../img/3/esc.png' },
+            { display: 'Delete（デリート）', key: 'Delete', img: '../img/3/delete.png' }
         ];
 
         let score = 0;
@@ -354,13 +354,13 @@
                 finalTimeEl.textContent = `クリアタイム: ${timeTaken} 秒`;
                 finalTimeEl.style.display = 'block'; // クリア時は表示
 
-                resultImgEl.src = "../img/clear.png";
+                resultImgEl.src = "../img/3/clear.png";
                 resultStatusEl.style.color = "#2ecc71";
             } else {
                 // タイムアップ時はタイムを表示しない、または「時間切れ」と出す
                 finalTimeEl.style.display = 'none';
 
-                resultImgEl.src = "../img/timeup.png";
+                resultImgEl.src = "../img/3/timeup.png";
                 resultStatusEl.style.color = "#e74c3c";
             }
 
@@ -387,7 +387,7 @@
             }
         });
 
-        window.addEventListener('keydown', (e) => {
+ 3/       window.addEventListener('keydown', (e) => {
             if (!isGameStarted) {
                 if (e.key === ' ') { e.preventDefault(); startGame(); }
                 return;
