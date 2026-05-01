@@ -1,1 +1,1 @@
-# browsergames
+# GUTStrainingGames
