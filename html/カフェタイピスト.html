@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カフェ・タイピスト</title>
+    <style>
+        :root {
+            --primary-color: #5d4037;
+            --accent-color: #d84315;
+            --bg-overlay: rgba(255, 255, 255, 0.85);
+            --text-color: #3e2723;
+            --correct-color: #2e7d32;
+            --wrong-color: #c62828;
+            --staff-card-bg: #efebe9;
+            --customer-card-bg: #fbe9e7;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            background-color: #d7ccc8;
+            background-image: url('../img/4/bg_cafe.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- タイトル画面 --- */
+        #title-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(62, 39, 35, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            color: white;
+            transition: opacity 0.5s ease;
+        }
+
+        /* タイトルロゴのコンテナ */
+        .title-logo-container {
+            margin-bottom: 30px;
+            width: 100%;
+            /* 横幅をいっぱいまで許可する */
+            display: flex;
+            justify-content: center;
+            /* 中央に寄せる */
+        }
+
+        /* ロゴ画像自体の設定 */
+        .title-img {
+            width: 600px;
+            max-width: 90%;
+            height: auto;
+            animation: float-logo 3s ease-in-out infinite;
+        }
+
+        /* タイトルロゴの浮遊アニメーション */
+        @keyframes float-logo {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+
+            /* 浮き幅も少し大きく */
+        }
+
+        /* タイトルの文字も少し装飾 */
+        #title-screen h1 {
+            font-family: 'Georgia', serif;
+            letter-spacing: 4px;
+            margin-top: 0;
+        }
+
+        #start-button {
+            padding: 18px 50px;
+            font-size: 32px;
+            background-color: #8d6e63;
+            color: white;
+            border: 2px solid white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        /* --- ゲーム本編 --- */
+        #game-main {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            background-color: rgba(93, 64, 55, 0.9);
+            padding: 10px 0;
+        }
+
+        #game-container {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .game-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border-radius: 20px;
+            background: var(--bg-overlay);
+            position: relative;
+        }
+
+        .avatar-area {
+            height: 40vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .avatar-area img {
+            height: 90%;
+            max-width: 100%;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 0 0 15px 15px;
+            font-weight: bold;
+        }
+
+        #target-area {
+            font-size: 32px;
+            font-weight: bold;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            min-height: 1.2em;
+            text-align: center;
+        }
+
+        #typing-box-main {
+            font-size: 32px;
+            padding: 15px;
+            width: 80%;
+            border: 3px solid var(--primary-color);
+            border-radius: 10px;
+            outline: none;
+            text-align: center;
+            background-color: white;
+            /* 背景を白に復活 */
+            color: var(--text-color);
+            caret-color: transparent;
+            /* 入力中の縦棒を消す（これで予測が出にくくなるブラウザがあります） */
+            /* 入力モードのヒントを与える（一部のブラウザ向け） */
+            ime-mode: active;
+            transition: all 0.3s ease;
+            /* 変化をなめらかに */
+            background-color: #f5f5f5;
+            /* 非アクティブ時は少しグレーに */
+            border: 3px solid #ccc;
+            /* 非アクティブ時の枠線 */
+        }
+
+        /* フォームが選択された時の青い枠線を消す */
+        #typing-box-main:focus {
+            background-color: #ffffff;
+            /* 背景を白く */
+            border-color: #ff9800;
+            /* 枠線をオレンジに */
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+            /* ぼんやり光らせる */
+            animation: pulse-focus 1.5s infinite;
+            /* 点滅アニメーション */
+        }
+
+        /* 親要素（target-areaを囲む要素）に relative を付ける */
+        #staff-action-area {
+            position: relative;
+        }
+
+        #customer-speech {
+            font-size: 1.2em;
+            color: var(--accent-color);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            text-align: center;
+            min-height: 3em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- タイピングカラー --- */
+        .typing-correct {
+            color: var(--correct-color);
+        }
+
+        .typing-wrong {
+            color: var(--wrong-color);
+            background: #ffcdd2;
+        }
+
+        .typing-untyped {
+            color: #a1887f;
+        }
+
+        /* ミスした時の揺れるアニメーション */
+        .miss-shake {
+            animation: shake 0.2s ease-in-out;
+            border-color: #ff5252 !important;
+            background-color: #ffebee !important;
+        }
+
+        /* お手本エリア全体の基本設定（少し背景を暗くすると文字が映えます） */
+        #target-area {
+            font-size: 32px;
+            letter-spacing: 0.1em;
+        }
+
+        /* ① 既に入力し終わった文字（過去） */
+        .char-correct {
+            color: #a1887f;
+            /* 落ち着いた茶色（入力済み） */
+            opacity: 0.6;
+            /* 少し透けさせる */
+        }
+
+        /* ② 今まさに入力した文字（現在） */
+        .char-typing {
+            color: #4caf50;
+            /* 安心感のある緑色 */
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        /* ③ 次に打つべき文字（注目！） */
+        .char-next {
+            color: #ff5722;
+            /* 鮮やかなオレンジ */
+            font-weight: bold;
+            border-bottom: 3px solid #ff5722;
+            background-color: rgba(255, 87, 34, 0.1);
+        }
+
+        /* ④ まだ触れていない文字（未来） */
+        .char-untyped {
+            color: #5d4037;
+            /* はっきりとした焦げ茶 */
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        @keyframes pulse-focus {
+            0% {
+                box-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(255, 152, 0, 0.8);
+            }
+
+            100% {
+                box-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
+            }
+        }
+
+        .shake {
+            animation: shake 0.2s ease-in-out 2;
+        }
+
+        #day-result-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            text-align: center;
+        }
+
+        .result-content {
+            background: var(--primary-color);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid white;
+        }
+
+        /* ブラウザの自動補完時の背景色を固定する */
+        #typing-box-main:-webkit-autofill,
+        #typing-box-main:-webkit-autofill:hover,
+        #typing-box-main:-webkit-autofill:focus {
+            -webkit-text-fill-color: var(--text-color);
+            /* 文字色 */
+            box-shadow: 0 0 0px 1000px white inset;
+            /* 背景色を白で塗りつぶす */
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        #typing-box-main {
+            color: #2e7d32;
+            /* 入力中の文字を濃い緑色にする */
+            font-weight: bold;
+            font-size: 32px;
+            caret-color: #ff5722;
+            /* カーソルの棒だけオレンジにする（可視化） */
+        }
+
+        #typing-box-main:disabled {
+            background-color: #e0e0e0;
+            border-color: #bdbdbd;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="title-screen">
+        <div style="display: flex; align-items: center; gap: 30px;">
+            <img src="../img/4/staff.png" style="height: 300px;">
+
+            <div style="text-align: center;">
+                <img src="../img/4/title_logo.png" style="width: 600px;">
+                <h1>Cafe Typist</h1>
+                <button id="start-button">開店する</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="day-result-screen" style="display: none;">
+        <div class="result-content">
+            <h2 id="result-day-title">1日目 終了</h2>
+
+            <div id="rank-image-container" style="margin: 20px 0; display: none;">
+                <img id="rank-img" src="" alt="ランク画像"
+                    style="max-width: 200px; border-radius: 10px; border: 3px solid #fff;">
+                <p id="rank-text" style="font-weight: bold; font-size: 1.5em; margin-top: 10px;"></p>
+            </div>
+
+            <p>ここまでの累計ミス数: <span id="total-miss-display">0</span></p>
+            <button id="next-day-button">次の日へ</button>
+        </div>
+    </div>
+
+    <div id="game-main">
+        <header>
+            <div class="stats">
+                <div><span id="day-num">1</span>日目</div>
+                <div>客: <span id="cust-num">1</span>/3</div>
+                <div>ミス: <span id="miss-count">0</span></div>
+            </div>
+        </header>
+
+        <div id="game-container">
+            <div id="staff-panel" class="game-panel">
+                <div class="avatar-area">
+                    <img id="staff-img" src="../img/4/staff.png" alt="店員">
+                </div>
+                <div id="staff-action-area" style="width: 100%; text-align: center;">
+                    <div id="target-area">いらっしゃいませ</div>
+                    <input type="text" id="typing-box-main" autocomplete="off" autocorrect="off" autocapitalize="off"
+                        spellcheck="false" inputmode="search">
+                    <div style="font-size: 0.8em; margin-top: 10px; color: #795548;">正確に打ちましょう（英数字は全て全角です）</div>
+                </div>
+            </div>
+
+            <div id="customer-panel" class="game-panel">
+                <div class="avatar-area">
+                    <img id="cust-img" src="" alt="お客様">
+                </div>
+                <div id="customer-speech">......</div>
+            </div>
+        </div>
+    </div>
+       
+    <script>
+        const gameData = [
+            {
+                day: 1,
+                customers: [
+                    {
+                        name: "ビジネスマン",
+                        image: "../img/4/cust1.png",
+                        initialSpeech: "「少し急いでいるんだ、早速注文を頼むよ」",
+                        chatLog: [
+                            { staff: "いらっしゃいませ", customer: "「ブラックコーヒーを」" },
+                            { staff: "ブラックコーヒーですね", customer: "「そう、ブラックだ。このチケットは使えるかい？」" },
+                            { staff: "はい、使えますよ", customer: "「よかった。じゃあこれで」" },
+                            { staff: "すぐにお持ちしますね", customer: "「頼んだよ」" }
+                        ],
+                    },
+                    {
+                        name: "老婦人",
+                        image: "../img/4/cust2.png",
+                        initialSpeech: "「あら、いい香りね」",
+                        chatLog: [
+                            { staff: "いらっしゃいませ！", customer: "「こんにちは、紅茶をいただけるかしら」" },
+                            { staff: "紅茶ですね", customer: "「ええ、ミルクもお願い」" },
+                            { staff: "ミルクもお付けしますね", customer: "「よろしくね」" },
+                            { staff: "かしこまりました", customer: "「うふふ、楽しみだわ」" }
+                        ],
+                    },
+                    {
+                        name: "少し派手な女性",
+                        image: "../img/4/cust3.png",
+                        initialSpeech: "「すみません、Wi-Fi使えますか？」",
+                        chatLog: [
+                            { staff: "はい、使えます", customer: "「ありがとう」" },
+                            { staff: "ご注文はお決まりですか？", customer: "「えーと、カフェラテをお願いします」" },
+                            { staff: "カフェラテですね", customer: "「あと、サンドイッチも」" },
+                            { staff: "少々お待ちください", customer: "「お願いします」" }
+                        ],
+                    }
+                ],
+            },
+
+            {
+                day: 2,
+                customers: [
+                    {
+                        name: "学生",
+                        image: "../img/4/cust4.png",
+                        initialSpeech: "「テスト勉強したくって」",
+                        chatLog: [
+                            { staff: "いらっしゃいませ", customer: "「キャラメルマキアートお願いします」" },
+                            { staff: "キャラメルマキアートですね", customer: "「甘めでお願いします」" },
+                            { staff: "シロップもお持ちしますね", customer: "「よろしくお願いします」" },
+                            { staff: "ごゆっくりどうぞ", customer: "「ありがとうございます！」" }
+                        ],
+                    },
+                    {
+                        name: "常連の作家",
+                        image: "../img/4/cust5.png",
+                        initialSpeech: "「こんにちは」",
+                        chatLog: [
+                            { staff: "こんにちは。いらっしゃいませ！", customer: "「いつもの席、空いているかな？」" },
+                            { staff: "奥の席ですね？空いております", customer: "「じゃあ、そこでお願い」" },
+                            { staff: "ご注文はいつもので宜しかったですか？", customer: "「うん、いつものブレンドで」" },
+                            { staff: "ただいまお持ちしますね", customer: "「うん」" }
+                        ],
+                    },
+                    {
+                        name: "ラフな青年",
+                        image: "../img/4/cust6.png",
+                        initialSpeech: "「どうも」",
+                        chatLog: [
+                            { staff: "いらっしゃいませ", customer: "「卵サンドとアイスティーお願いします」" },
+                            { staff: "卵サンド、アイスティーですね？かしこまりました", customer: "「はい」" },
+                            { staff: "以上でよろしいですか？", customer: "「シロップは２つでお願いします」" },
+                            { staff: "シロップ２つですね。少々お待ちください", customer: "「お願いします」" }
+                        ],
+                    }
+                ],
+            },
+
+            {
+                day: 3,
+                customers: [
+                    {
+                        name: "編集者の女性",
+                        image: "../img/4/cust7.png",
+                        initialSpeech: "「こんにちは、空いてますか？」",
+                        chatLog: [
+                            { staff: "こんにちは。いらっしゃいませ", customer: "「とりあえずコーヒーで」" },
+                            { staff: "コーヒーはブレンドでよろしいですか？", customer: "「それでお願いします」" },
+                            { staff: "かしこまりました", customer: "「後でもう１人来ますので」" },
+                            { staff: "了解いたしました", customer: "「よろしく」" }
+                        ],
+                    },
+                    {
+                        name: "老紳士",
+                        image: "../img/4/cust8.png",
+                        initialSpeech: "「こんにちは」",
+                        chatLog: [
+                            { staff: "いらっしゃいませ！ご注文はお決まりですか？", customer: "「少し考えさせて」" },
+                            { staff: "かしこまりました。お決まりになりましたらお申し付けください", customer: "「あ、このモーニングいただこうかな」" },
+                            { staff: "モーニングですね？セットはいかが致しますか？", customer: "「Ｂのセットで」" },
+                            { staff: "Ｂセットですね。ただいまお持ちします", customer: "「おねがいします」" }
+                        ],
+                    },
+                    {
+                        name: "常連の作家",
+                        image: "../img/4/cust5.png",
+                        initialSpeech: "「いつもの席お願い」",
+                        chatLog: [
+                            { staff: "いらっしゃいませ。いつもの席ですね", customer: "「今日は人と会う予定なんだ」" },
+                            { staff: "あちらのお客様でしょうか？", customer: "「そうそう。じゃあ、今日はあっちに座ろうかな」" },
+                            { staff: "ご注文はいかがなさいますか？", customer: "「ブレンドで」" },
+                            { staff: "ブレンドですね。かしこまりました", customer: "「うん」" }
+                        ],
+                    }
+                ],
+            },
+
+            {
+                day: 4,
+                customers: [
+                    {
+                        name: "ＯＬ",
+                        image: "../img/4/cust9.png",
+                        initialSpeech: "「すみませーん」",
+                        chatLog: [
+                            { staff: "いらっしゃいませ。ただいま伺います", customer: "「おすすめってありますか？」" },
+                            { staff: "当店のおすすめはフレンチトーストになります", customer: "「ドリンクは何がおすすめですか？」" },
+                            { staff: "ドリンクですとブレンドコーヒーがおすすめです", customer: "「じゃあ、そのふたつお願いします」" },
+                            { staff: "ありがとうございます。少々お待ちください", customer: "「はーい」" }
+                        ],
+                    },
+                    {
+                        name: "老婦人",
+                        image: "../img/4/cust2.png",
+                        initialSpeech: "「ここはいつもいい香りで包まれているわね」",
+                        chatLog: [
+                            { staff: "恐れ入ります", customer: "「今日も紅茶をいただこうかしら」" },
+                            { staff: "紅茶ですね、ミルクはお付けいたしますか？", customer: "「そうねぇ、おねがいね」" },
+                            { staff: "他にご注文はございますか？", customer: "「とりあえず紅茶だけでいいわ」" },
+                            { staff: "かしこまりました。すぐにお持ちしますね", customer: "「よろしくね」" }
+                        ],
+                    },
+                    {
+                        name: "常連の作家",
+                        image: "../img/4/cust5.png",
+                        initialSpeech: "「いつもの席でお願い」",
+                        chatLog: [
+                            { staff: "いらっしゃいませ。いつもの奥の席ですね", customer: "「うん」" },
+                            { staff: "本日はいかがなさいますか？", customer: "「いつものブレンドで」" },
+                            { staff: "ブレンドですね。少々お待ちください", customer: "「そうそう、今日は少し甘めでお願い」" },
+                            { staff: "スティックシュガーをお付けしますね", customer: "「うん、世話かけるね」" }
+                        ],
+                    }
+                ],
+            },
+
+            {
+                day: 5,
+                customers: [
+                    {
+                        name: "女子高生",
+                        image: "../img/4/cust10.png",
+                        initialSpeech: "「こんにちわー」",
+                        chatLog: [
+                            { staff: "いらっしゃいませ！", customer: "「後でもう一人来ますので」" },
+                            { staff: "２名様ですね。テーブル席でよろしいですか？", customer: "「はい、お願いします」" },
+                            { staff: "ご注文はいかがなさいますか？", customer: "「後ででもいいですか？」" },
+                            { staff: "了解いたしました。ごゆっくりどうぞ", customer: "「ありがとうございます」" }
+                        ],
+                    },
+                    {
+                        name: "編集者の女性",
+                        image: "../img/4/cust7.png",
+                        initialSpeech: "「人と待ち合わせしていまして」",
+                        chatLog: [
+                            { staff: "作家の先生ですか？今日はまだ見えていないようですが", customer: "「あ、今日は妹です」" },
+                            { staff: "失礼いたしました。あちらの方でしょうか？", customer: "「ええ」" },
+                            { staff: "ご案内いたしますね。こちらです", customer: "「ありがとうございます」" },
+                            { staff: "ご注文が決まりましたらまたお呼びください", customer: "「わかりました」" }
+                        ],
+                    },
+                    {
+                        name: "テンメイ",
+                        image: "../img/4/cust11.png",
+                        initialSpeech: "「いい雰囲気のお店だね」",
+                        chatLog: [
+                            { staff: "いらっしゃいませ。恐れ入ります", customer: "「カウンター席、いいかな？」" },
+                            { staff: "かしこまりました。ご注文はいかがなさいますか？", customer: "「とりあえずアメリカンコーヒーをお願い」" },
+                            { staff: "アメリカンですね。ほかにご注文はございますか？", customer: "「そうだね、それじゃパウンドケーキもいただこうかな」" },
+                            { staff: "ありがとうございます！パウンドケーキとアメリカンですね", customer: "「いやぁ楽しみだなぁ」" }
+                        ],
+                    }
+                ],
+            }
+
+        ];
+
+        while (gameData.length < 5) {
+            gameData.push({ day: gameData.length + 1, customers: gameData[0].customers });
+        }
+
+        let currentDay = 0;
+        let currentCust = 0;
+        let currentPhrase = 0;
+        let misses = 0;
+        let isComposing = false;
+        let speechInterval;
+
+        const titleScreen = document.getElementById('title-screen');
+        const gameMain = document.getElementById('game-main');
+        const startButton = document.getElementById('start-button');
+        const targetArea = document.getElementById('target-area');
+        const inputElem = document.getElementById('typing-box-main');
+        const speechElem = document.getElementById('customer-speech');
+        const missCountElem = document.getElementById('miss-count');
+        const custImgElem = document.getElementById('cust-img');
+        const staffImgElem = document.getElementById('staff-img');
+        const dayResultScreen = document.getElementById('day-result-screen');
+        const nextDayButton = document.getElementById('next-day-button');
+
+        startButton.addEventListener('click', () => {
+            titleScreen.style.opacity = '0';
+            setTimeout(() => {
+                titleScreen.style.display = 'none';
+                gameMain.style.display = 'flex';
+                startCustomer();
+            }, 500);
+        });
+
+        function customerSpeak(text, callback) {
+            let charIndex = 0;
+            speechElem.innerText = "";
+            inputElem.disabled = true;
+            clearInterval(speechInterval);
+            speechInterval = setInterval(() => {
+                speechElem.innerText += text[charIndex];
+                charIndex++;
+                if (charIndex >= text.length) {
+                    clearInterval(speechInterval);
+                    if (callback) callback();
+                }
+            }, 40);
+        }
+
+        function startCustomer() {
+            currentPhrase = 0;
+            inputElem.value = "　";
+            inputElem.disabled = true;
+            targetArea.innerText = "......";
+            speechElem.innerText = "......";
+
+            const data = gameData[currentDay].customers[currentCust];
+            custImgElem.src = data.image;
+
+            setTimeout(() => {
+                custImgElem.style.opacity = "1";
+                staffImgElem.style.opacity = "1";
+
+                setTimeout(() => {
+                    customerSpeak(data.initialSpeech, () => {
+                        inputElem.disabled = false;
+                        inputElem.value = "　";
+
+                        // 確実にフォーカスを当てるための処理
+                        inputElem.focus();
+
+                        // スマホ等のブラウザ対策で少し遅延させて再度フォーカス
+                        setTimeout(() => {
+                            inputElem.focus();
+                            inputElem.setSelectionRange(1, 1);
+                        }, 10);
+
+                        updateTypingDisplay();
+                    });
+                }, 800);
+            }, 100);
+
+            document.getElementById('day-num').innerText = currentDay + 1;
+            document.getElementById('cust-num').innerText = currentCust + 1;
+        }
+
+        function updateTypingDisplay() {
+            const data = gameData[currentDay].customers[currentCust];
+            const target = data.chatLog[currentPhrase].staff;
+            renderText("", target);
+        }
+
+        function renderText(correctText, untypedText, wrongText = "") {
+            targetArea.innerHTML =
+                `<span class="typing-correct">${correctText}</span>` +
+                `<span class="typing-wrong">${wrongText}</span>` +
+                `<span class="typing-untyped">${untypedText}</span>`;
+        }
+
+        inputElem.addEventListener('compositionstart', () => { isComposing = true; });
+        inputElem.addEventListener('compositionend', () => { isComposing = false; checkInput(); });
+        inputElem.addEventListener('input', () => { if (!isComposing) checkInput(); });
+        inputElem.addEventListener('keydown', (e) => {
+            // 文字数が1文字（全角スペースのみ）の時に消そうとしたらブロック
+            if (e.key === 'Backspace' && inputElem.value.length <= 1) {
+                e.preventDefault();
+            }
+            // 左矢印キーなどで全角スペースより前に戻るのを防ぐ
+            if (e.key === 'ArrowLeft' && inputElem.selectionStart <= 1) {
+                e.preventDefault();
+            }
+        });
+        inputElem.addEventListener('click', () => {
+            if (inputElem.value.length >= 1) {
+                inputElem.setSelectionRange(inputElem.value.length, inputElem.value.length);
+            }
+        });
+
+        function checkInput() {
+            // 1. 全角スペースのガード（ここはそのまま）
+            if (inputElem.value.length === 0 || !inputElem.value.startsWith("　")) {
+                inputElem.value = "　" + inputElem.value.replace(/　/g, "");
+                return;
+            }
+
+            const data = gameData[currentDay].customers[currentCust];
+            const target = data.chatLog[currentPhrase].staff;
+            let input = inputElem.value.slice(1); // 純粋な入力値
+
+            // ★ 修正ポイント：まず「完全に一致しているか」を先にチェックする
+            if (input === target) {
+                renderText(target, "", ""); // 全て正解色に
+                inputElem.disabled = true;
+                if (typeof setGuide === 'function') setGuide("off");
+                nextStep();
+                return; // 正解ならここで終了
+            }
+
+            // 2. 途中経過の判定
+            let correctPart = "";
+            for (let i = 0; i < input.length; i++) {
+                if (i < target.length && input[i] === target[i]) {
+                    correctPart += target[i];
+                } else {
+                    // ★ ミスした瞬間の処理
+                    misses++;
+                    if (missCountElem) missCountElem.innerText = misses;
+
+                    targetArea.classList.add('shake');
+                    setTimeout(() => targetArea.classList.remove('shake'), 200);
+
+                    // 入力リセット
+                    inputElem.value = "　";
+                    renderText("", target, "");
+                    if (typeof setGuide === 'function') setGuide("waiting");
+                    return; // ミスしたら打ち直しへ
+                }
+            }
+
+            // 3. 入力中（まだ途中）の表示更新
+            if (typeof setGuide === 'function') {
+                setGuide(input.length > 0 ? "typing" : "waiting");
+            }
+            const untypedPart = target.substring(correctPart.length);
+            renderText(correctPart, untypedPart, "");
+        }
+
+        function flashMissEffect() {
+            const box = document.getElementById('typing-box-main');
+            box.classList.add('miss-shake');
+
+            // 0.2秒後にクラスを外して元に戻す
+            setTimeout(() => {
+                box.classList.remove('miss-shake');
+            }, 200);
+        }
+
+        function nextStep() {
+            const data = gameData[currentDay].customers[currentCust];
+            const customerResponse = data.chatLog[currentPhrase].customer;
+            currentPhrase++;
+
+            customerSpeak(customerResponse, () => {
+                if (currentPhrase >= data.chatLog.length) {
+                    setTimeout(endCustomer, 1200);
+                } else {
+                    inputElem.disabled = false;
+                    inputElem.value = "　";
+                    inputElem.focus();
+
+                    // ★ カーソルを全角スペースの後ろ（インデックス1）に強制セット
+                    setTimeout(() => {
+                        inputElem.setSelectionRange(1, 1);
+                    }, 0);
+
+                    updateTypingDisplay();
+                }
+            });
+        }
+
+        function endCustomer() {
+            custImgElem.style.opacity = "0";
+            staffImgElem.style.opacity = "0";
+
+            setTimeout(() => {
+                currentCust++;
+                if (currentCust >= gameData[currentDay].customers.length) {
+                    showDayResult();
+                } else {
+                    startCustomer();
+                }
+            }, 1200);
+        }
+
+        function endDay() {
+            inputElem.disabled = true;
+            const isFinalDay = (currentDay === gameData.length - 1);
+
+            targetArea.innerText = isFinalDay ? "✨ Grand Finale ✨" : "本日の営業終了";
+            speechElem.innerText = isFinalDay ? "5日間、本当にありがとうございました！" : "お疲れ様でした！";
+
+            setTimeout(() => {
+                dayResultScreen.style.display = 'flex';
+                document.getElementById('total-miss-display').innerText = misses;
+
+                if (isFinalDay) {
+                    document.getElementById('result-day-title').innerText = "🎉 祝・全日程クリア 🎉";
+                    nextDayButton.innerText = "タイトルへ戻る";
+
+                    // ランク判定
+                    const rankImgElem = document.getElementById('rank-img');
+                    const rankTextElem = document.getElementById('rank-text');
+                    const rankContainer = document.getElementById('rank-image-container');
+                    rankContainer.style.display = 'block'; // ランク画像を表示
+
+                    if (misses === 0) {
+                        rankImgElem.src = "../img/4/rank_perfect.png";
+                        rankTextElem.innerText = "ランク：メイドオブメイド";
+                        rankTextElem.style.color = "#ffd700"; // ゴールド
+                    } else if (misses <= 8) {
+                        rankImgElem.src = "../img/4/rank_a.png";
+                        rankTextElem.innerText = "ランク：一流メイド";
+                        rankTextElem.style.color = "#ffeb3b";
+                    } else if (misses <= 16) {
+                        rankImgElem.src = "../img/4/rank_b.png";
+                        rankTextElem.innerText = "ランク：見習い卒業";
+                        rankTextElem.style.color = "#ffffff";
+                    } else {
+                        rankImgElem.src = "../img/4/rank_c.png";
+                        rankTextElem.innerText = "ランク：ドジっ子メイド";
+                        rankTextElem.style.color = "#cfd8dc";
+                    }
+                } else {
+                    document.getElementById('result-day-title').innerText = `${currentDay + 1}日目 終了`;
+                    nextDayButton.innerText = "次の日へ";
+                    document.getElementById('rank-image-container').style.display = 'none'; // 途中経過では隠す
+                }
+            }, 1500);
+        }
+
+        function showDayResult() {
+            dayResultScreen.style.display = 'flex';
+            const isFinalDay = (currentDay === gameData.length - 1);
+
+            // ミス数の表示
+            document.getElementById('total-miss-display').innerText = misses;
+
+            // ランク画像コンテナの取得
+            const rankContainer = document.getElementById('rank-image-container');
+            const rankImgElem = document.getElementById('rank-img');
+            const rankTextElem = document.getElementById('rank-text');
+
+            if (isFinalDay) {
+                // --- 最終日の表示設定 ---
+                document.getElementById('result-day-title').innerText = "🎉 祝・全日程クリア 🎉";
+                nextDayButton.innerText = "タイトルへ戻る";
+
+                rankContainer.style.display = 'block'; // ランク画像を表示
+
+                // ミス数に応じたランク判定
+                if (misses === 0) {
+                    rankImgElem.src = "../img/4/rank_perfect.png";
+                    rankTextElem.innerText = "ランク：メイドオブメイド";
+                    rankTextElem.style.color = "#ffd700"; // ゴールド
+                } else if (misses <= 4) {
+                    rankImgElem.src = "../img/4/rank_a.png";
+                    rankTextElem.innerText = "ランク：一流メイド";
+                    rankTextElem.style.color = "#ffeb3b";
+                } else if (misses <= 15) {
+                    rankImgElem.src = "../img/4/rank_b.png";
+                    rankTextElem.innerText = "ランク：見習い卒業";
+                    rankTextElem.style.color = "#ffffff";
+                } else {
+                    rankImgElem.src = "../img/4/rank_c.png";
+                    rankTextElem.innerText = "ランク：ドジっ子メイド";
+                    rankTextElem.style.color = "#cfd8dc";
+                }
+            } else {
+                // --- 通常の日の表示設定 ---
+                document.getElementById('result-day-title').innerText = `${currentDay + 1}日目 終了`;
+                nextDayButton.innerText = "次の日へ";
+                rankContainer.style.display = 'none'; // ランク画像を隠す
+            }
+        }
+
+        // ボタンクリック時の処理（アラートを消してスッキリさせる場合）
+        nextDayButton.addEventListener('click', () => {
+            dayResultScreen.style.display = 'none';
+            if (currentDay >= gameData.length - 1) {
+                // 最終日ならリロード
+                location.reload();
+            } else {
+                // 次の日へ
+                currentDay++;
+                currentCust = 0;
+                startCustomer();
+            }
+        });
+
+        window.onload = () => {
+            const input = document.getElementById('typing-box-main');
+            if (input) {
+                // 予測変換や自動補完を徹底的にオフにする設定
+                input.setAttribute('autocomplete', 'off');
+                input.setAttribute('autocorrect', 'off');
+                input.setAttribute('autocapitalize', 'off');
+                input.setAttribute('spellcheck', 'false');
+
+                // 読み取り専用を一時的に解除するハック（自動フォーカス対策）
+                input.readOnly = true;
+                setTimeout(() => {
+                    input.readOnly = false;
+                }, 500);
+            }
+        };
+
+    </script>
+</body>
+
+</html>
