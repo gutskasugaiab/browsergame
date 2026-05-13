@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タイピングしないと出れない家</title>
+    <style>
+                /* 全体の背景 */
+        body {
+            background-color: #000000;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* ゲームの枠組み：幅を600pxに固定 */
+        #game-container {
+            width: 600px;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #1a1a1a;
+            box-sizing: border-box;
+        }
+
+        #title-screen {
+            text-align: center;
+            /* テキストを中央に */
+            padding: 40px 0;
+            display: flex;
+            /* 要素（h1, p, button）を縦に並べて中央へ */
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* メインタイトル */
+        #title-screen h1 {
+            font-family: 'Times New Roman', serif;
+            color: #9933ff;
+            /* 紫色 */
+            font-size: 3.5rem;
+            line-height: 1.2;
+            text-shadow: 3px 3px 0px #000;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* サブタイトル */
+        #title-screen p,
+        #title-screen span {
+            color: #e0e0e0 !important;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            display: block;
+            width: 100%;
+            text-align: center;
+            /* 確実に中央寄せ */
+        }
+
+        /* ゲームのコンテンツ（ログ画面など） */
+        #game-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        /* ログの表示部分 */
+        #log-display {
+            font-size: 1.2rem;
+            height: 30em;
+            line-height: 1.8;
+            overflow-y: auto;
+            background-color: #242424;
+            border: 1px solid #333;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            display: block;
+            color: #e0e0e0;
+        }
+
+        /* 遊び方の説明エリア */
+        .how-to-play {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            /* ほんのり背景色 */
+            border-radius: 8px;
+            text-align: left;
+            /* リストなので左寄せ */
+            max-width: 400px;
+            border: 1px solid #444;
+        }
+
+        .how-to-play h3 {
+            color: #9933ff;
+            font-size: 1rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .how-to-play ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .how-to-play li {
+            margin-bottom: 5px;
+        }
+
+        .how-to-play strong {
+            color: #00ff00;
+            /* 強調したい文字の色 */
+        }
+
+        /* 入力エリア */
+        #input-wrapper {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .prompt {
+            margin-right: 10px;
+            color: #00ff00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        /* 入力欄本体 */
+        #command-input {
+            width: 100%;
+            font-size: 1.8rem;
+            padding: 8px;
+            background-color: #222;
+            border: 1px solid #666;
+            border-radius: 4px;
+            color: #fff;
+            outline: none;
+        }
+
+        /* メッセージの基本色（これがないと黒背景で見えない場合があります） */
+        .message-line {
+            color: #e0e0e0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 8px;
+        }
+
+        /* 「」内の文字色を設定 */
+        .highlight {
+            color: #ff0000;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(190, 190, 18, 0.5);
+        }
+
+        /* 入力欄とガイドをまとめるコンテナ */
+        .input-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        /* ガイドテキストの見た目 */
+        .input-guide {
+            color: #aaaaaa;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0.8;
+        }
+
+        /* スマホなど画面が狭い時の対応 */
+        @media (max-width: 800px) {
+            .input-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .input-guide {
+                margin-left: 30px;
+            }
+        }
+
+        /* ナレーション・字幕風の装飾 */
+        .subtitle-narration {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-left: 4px solid #9933ff;
+            padding: 15px;
+            margin: 15px 0;
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* 字幕がふわっと出るアニメーション */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ルビ（ひらがな部分）のスタイル */
+        rt {
+            font-size: 0.55em;
+            color: #aaa;
+            letter-spacing: 0.1em;
+            padding-bottom: 0.2em;
+        }
+
+        .subtitle-narration {
+            line-height: 2.2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="game-container">
+        <div id="title-screen">
+            <h1>タイピング<br>しないと<br>出れない家</h1>
+            <p>〜 短時間脱出ゲーム 〜</p>
+            <button id="start-button">GAME START</button>
+
+            <div class="how-to-play">
+                <h3>【 遊び方 】</h3>
+                <ul>
+                    <li>気になる場所を<strong>「調べる」</strong>ことで物語が進みます。</li>
+                    <li><strong>「廊下」「キッチン」</strong>などの場所を入力して移動します。</li>
+                    <li>行き詰まったら<strong>「見る」</strong>で周りを確認しましょう。</li>
+                    <li>「」で囲まれた赤い文字がヒントになります。</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div id="game-content" style="display: none;">
+            <div id="log-display"></div>
+
+            <div class="input-container">
+                <div id="input-wrapper">
+                    <span class="prompt">&gt;</span>
+                    <input type="text" id="command-input" placeholder="行動を入力..." autocomplete="off">
+                </div>
+                <span class="input-guide">※「戻る」と入力するとひとつ前のフロアに戻れます</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+                // --- DOM要素の取得 ---
+        const titleScreen = document.getElementById('title-screen');
+        const gameContent = document.getElementById('game-content');
+        const startButton = document.getElementById('start-button');
+        const logDisplay = document.getElementById('log-display');
+        const commandInput = document.getElementById('command-input');
+
+        // --- ゲームの状態（フラグ管理） ---
+        let state = {
+            isStarted: false,
+            room: "prologue",
+            hasKey: false,         // 小さい鍵（枕の下）
+            hasPadlockKey: false,  // 南京錠の鍵（古い箱）
+            hasCard: false,        // プラスチックのカード（キッチン）
+            ansMonth: 0,
+            ansDay: 0,
+            passCode: "",
+            startTime: null, // 開始時間
+            endTime: null    // 終了時間
+        };
+
+        /**
+         * 初期化：ランダムな数字を生成
+         */
+        function initializeRandomElements() {
+            state.ansMonth = Math.floor(Math.random() * 12) + 1;
+            state.ansDay = Math.floor(Math.random() * 28) + 1;
+            state.passCode = state.ansMonth.toString().padStart(2, '0') +
+                state.ansDay.toString().padStart(2, '0');
+        }
+
+        /**
+         * 全角数字を半角数字に変換する
+         */
+        function toHalfWidth(str) {
+            return str.replace(/[０-９]/g, (s) => {
+                return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+            });
+        }
+
+        // 初期化実行
+        initializeRandomElements();
+
+        // --- マップデータ ---
+        const rooms = {
+            "prologue": {
+                title: "？？？",
+                description: "……<ruby>「喉」<rt>のど</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>む。<ruby>「瞼」<rt>まぶた</rt></ruby>も<ruby>重<rt>おも</rt></ruby>いが、まず<ruby>落<rt>お</rt></ruby>ち<ruby>着<rt>つ</rt></ruby>いて<ruby>「状況」<rt>じょうきょう</rt></ruby><ruby>判断<rt>はんだん</rt></ruby>してみよう。",
+                handle: (cmd) => {
+                    if (cmd.includes("見る") || cmd.includes("開ける") || cmd.includes("起きる")) {
+                        state.isStarted = true;
+                        state.room = "bedroom";
+                        return "……<ruby>重<rt>おも</rt></ruby>い<ruby>瞼<rt>まぶた</rt></ruby>を<ruby>開<rt>あ</rt></ruby>けた。<ruby>強烈<rt>きょうれつ</rt></ruby>な<ruby>頭痛<rt>ずつう</rt></ruby>がするが、なんとか<ruby>起<rt>お</rt></ruby>き<ruby>上<rt>あ</rt></ruby>がれそうだ。";
+                    }
+                    if (cmd.includes("喉") || cmd.includes("声")) {
+                        return "<ruby>声<rt>こえ</rt></ruby>を<ruby>上<rt>あ</rt></ruby>げようとしたが、<ruby>喉<rt>のど</rt></ruby>が<ruby>焼<rt>や</rt></ruby>けるように<ruby>熱<rt>あつ</rt></ruby>く<ruby>音<rt>おと</rt></ruby>にならない。";
+                    }
+                    if (cmd.includes("瞼") || cmd.includes("目")) {
+                        return "どうにか<ruby>目<rt>め</rt></ruby>を<ruby>「開ける」<rt>あ　　　</rt></ruby>ことに<ruby>集中<rt>しゅうちゅう</rt></ruby>しよう。";
+                    }
+                    if (cmd.includes("状況") || cmd.includes("場所")) {
+                        return "なぜここにいるのかわからない。ここが<ruby>何処<rt>どこ</rt></ruby>なのかもわからないけど、<ruby>脱出<rt>だっしゅつ</rt></ruby>しないといけないという<ruby>事<rt>こと</rt></ruby>だけはわかる。";
+                    }
+                    return "<ruby>意識<rt>いしき</rt></ruby>が<ruby>朦朧<rt>もうろう</rt></ruby>としていて<ruby>余計<rt>よけい</rt></ruby>なことは<ruby>何<rt>なに</rt></ruby>も<ruby>考<rt>かんが</rt></ruby>えたくない。";
+                }
+            },
+            "bedroom": {
+                title: "2F <ruby>寝室<rt>しんしつ</rt></ruby>",
+                get description() {
+                    return `「ベッド」で<ruby>眠<rt>ねむ</rt></ruby>っていたようだ。「ドア」には<ruby>鍵<rt>かぎ</rt></ruby>がかかっている。<ruby>「窓」<rt>まど</rt></ruby>から<ruby>隙間風<rt>すきまかぜ</rt></ruby>が<ruby>入<rt>はい</rt></ruby>ってきている。<ruby>壁<rt>かべ</rt></ruby>にはカレンダーがあり、<ruby>床<rt>ゆか</rt></ruby>には<ruby>「古い箱」<rt>ふる　はこ</rt></ruby>が<ruby>置<rt>お</rt></ruby>かれている。`;
+                },
+                objects: {
+                    "カレンダー": () => `${state.ansMonth}<ruby>月<rt>がつ</rt></ruby>のページだ。${state.ansDay}<ruby>日<rt>にち</rt></ruby>のところに<ruby>赤丸<rt>あかまる</rt></ruby>がついている。`,
+                    "枕": () => {
+                        if (!state.hasKey) {
+                            state.hasKey = true;
+                            return "ふかふかの<ruby>枕<rt>まくら</rt></ruby>だ。……おや、<ruby>下<rt>した</rt></ruby>に<ruby>『小さい鍵』<rt>ちい　かぎ</rt></ruby>が<ruby>隠<rt>かく</rt></ruby>されていた！ <ruby>小さい鍵<rt>ちい　　かぎ</rt></ruby>を<ruby>入手<rt>にゅうしゅ</rt></ruby>した。";
+                        }
+                        return "<ruby>枕<rt>まくら</rt></ruby>の<ruby>下<rt>した</rt></ruby>にはもう<ruby>何<rt>なに</rt></ruby>もなさそうだ。";
+                    },
+                    "古い箱": () => {
+                        if (!state.hasKey) {
+                            return "<ruby>鍵<rt>かぎ</rt></ruby>がかかっている。<ruby>何<rt>なに</rt></ruby>かを<ruby>差<rt>さ</rt></ruby>し<ruby>込<rt>こ</rt></ruby>む<ruby>穴<rt>あな</rt></ruby>があるようだ。";
+                        }
+                        if (!state.hasPadlockKey) {
+                            state.hasPadlockKey = true;
+                            return "<ruby>小<rt>ちい</rt></ruby>さい<ruby>鍵<rt>かぎ</rt></ruby>がぴったり<ruby>合<rt>あ</rt></ruby>った！<ruby>中<rt>なか</rt></ruby>から<ruby>『南京錠の鍵』<rt>なんきんじょう　かぎ</rt></ruby>が<ruby>出<rt>で</rt></ruby>てきた。 <ruby>南京錠の鍵<rt>なんきんじょう　かぎ</rt></ruby>を<ruby>入手<rt>にゅうしゅ</rt></ruby>した。";
+                        }
+                        return "<ruby>箱<rt>はこ</rt></ruby>の<ruby>中<rt>なか</rt></ruby>はもう<ruby>空<rt>から</rt></ruby>っぽだ。";
+                    },
+                    "ベッド": () => "ベッドには「マット」と<ruby>「枕」<rt>まくら</rt></ruby>がある。",
+                    "マット": () => "<ruby>不気味<rt>ぶきみ</rt></ruby>なくらい<ruby>綺麗<rt>きれい</rt></ruby>なマットだ。",
+                    "窓": () => "<ruby>窓<rt>まど</rt></ruby>には<ruby>格子<rt>こうし</rt></ruby>が<ruby>付<rt>つ</rt></ruby>いている。ここから<ruby>脱出<rt>だっしゅつ</rt></ruby>するのは<ruby>不可能<rt>ふかのう</rt></ruby>だろう。"
+                },
+                handle: (cmd) => {
+                    // オブジェクトの調査処理（ここをシンプルに保つ）
+                    for (let key in rooms["bedroom"].objects) {
+                        if (cmd.includes(key)) {
+                            const res = rooms["bedroom"].objects[key];
+                            return typeof res === "function" ? res() : res;
+                        }
+                    }
+
+                    // 移動の処理
+                    if (cmd.includes("ドア") || cmd.includes("廊下")) {
+                        if (state.hasPadlockKey) {
+                            state.room = "hallway";
+                            return "<ruby>南京錠の鍵<rt>なんきんじょう　かぎ</rt></ruby>を<ruby>使<rt>つか</rt></ruby>ってドアを<ruby>開<rt>あ</rt></ruby>け、<ruby>廊下<rt>ろうか</rt></ruby>へ<ruby>出<rt>で</rt></ruby>た。";
+                        }
+
+                        // 小さい鍵しか持っていない、あるいは何も持っていない場合
+                        if (state.hasKey) {
+                            return "この<ruby>『小さい鍵』<rt>ちい　　かぎ</rt></ruby>は<ruby>南京錠<rt>なんきんじょう</rt></ruby>の<ruby>鍵穴<rt>かぎあな</rt></ruby>には<ruby>合<rt>あ</rt></ruby>わないようだ。<ruby>他<rt>ほか</rt></ruby>を<ruby>調<rt>しら</rt></ruby>べよう。";
+                        }
+                        return "ドアには<ruby>頑丈<rt>がんじょう</rt></ruby>な<ruby>南京錠<rt>なんきんじょう</rt></ruby>がかかっていて<ruby>開<rt>ひら</rt></ruby>きそうもない。";
+                    }
+                    return null;
+                }
+            },
+            "hallway": {
+                title: "2F <ruby>廊下<rt>ろうか</rt></ruby>",
+                description: "<ruby>薄暗い廊下<rt>うすぐら　ろうか</rt></ruby>だ。<ruby>下<rt>した</rt></ruby>へ<ruby>続<rt>つづ</rt></ruby>く<ruby>「階段」<rt>かいだん</rt></ruby>と、<ruby>「子供部屋」<rt>こどもべや</rt></ruby>と<ruby>「寝室」<rt>しんしつ</rt></ruby>のドアがある。",
+                handle: (cmd) => {
+                    if (cmd.includes("階段") || cmd.includes("下る")) {
+                        state.room = "hallway1f";
+                        return "<ruby>足音<rt>あしおと</rt></ruby>を<ruby>忍<rt>しの</rt></ruby>ばせながら<ruby>階段<rt>かいだん</rt></ruby>を<ruby>下<rt>お</rt></ruby>りた。";
+                    }
+                    if (cmd.includes("子供部屋") || cmd.includes("ドア")) {
+                        if (state.hasCard) { // キッチンで拾ったカードがあれば入れる
+                            state.room = "kidsroom";
+                            return "<ruby>隙間<rt>すきま</rt></ruby>に『プラスチックのカード』を<ruby>差<rt>さ</rt></ruby>し<ruby>込<rt>こ</rt></ruby>むと、カチリと<ruby>音<rt>おと</rt></ruby>がしてドアが<ruby>開<rt>ひら</rt></ruby>いた。";
+                        } else {
+                            return "ドアノブが<ruby>壊<rt>こわ</rt></ruby>れている。<ruby>薄い板<rt>うす　いた</rt></ruby>のようなものがあれば<ruby>開<rt>あ</rt></ruby>けられそうだ。";
+                        }
+                    }
+                    if (cmd.includes("戻る") || cmd.includes("寝室")) {
+                        state.room = "bedroom";
+                        return "<ruby>寝室<rt>しんしつ</rt></ruby>に<ruby>戻<rt>もど</rt></ruby>った。";
+                    }
+                    return null;
+                }
+            },
+            "kidsroom": {
+                title: "2F <ruby>子供部屋<rt>こどもべや</rt></ruby>",
+                description: "「おもちゃ」が<ruby>散乱<rt>さんらん</rt></ruby>している。<ruby>学習<rt>がくしゅう</rt></ruby><ruby>「机」<rt>づくえ</rt></ruby>の<ruby>上<rt>うえ</rt></ruby>に「メモ」がある。",
+                objects: {
+                    "メモ": () => `『<ruby>玄関<rt>げんかん</rt></ruby>のパスワードは ${state.passCode} だ』と<ruby>書<rt>か</rt></ruby>かれている。`,
+                    "机": "<ruby>勉強机<rt>べんきょうづくえ</rt></ruby>だ。<ruby>引き出<rt>ひ　だ</rt></ruby>しは<ruby>空<rt>から</rt></ruby>っぽだった。",
+                    "おもちゃ": "<ruby>小<rt>ちい</rt></ruby>さいころに<ruby>見<rt>み</rt></ruby>たことあるおもちゃだ。<ruby>特<rt>とく</rt></ruby>に<ruby>変<rt>か</rt></ruby>わったところはなさそうだ。"
+                },
+                handle: (cmd) => {
+                    for (let key in rooms["kidsroom"].objects) {
+                        if (cmd.includes(key)) {
+                            const res = rooms["kidsroom"].objects[key];
+                            return typeof res === "function" ? res() : res;
+                        }
+                    }
+                    if (cmd.includes("廊下") || cmd.includes("戻る")) {
+                        state.room = "hallway";
+                        return "<ruby>廊下<rt>ろうか</rt></ruby>へ<ruby>戻<rt>もど</rt></ruby>った。";
+                    }
+                    return null;
+                }
+            },
+            "hallway1f": {
+                title: "1F <ruby>廊下<rt>ろうか</rt></ruby>",
+                description: "1<ruby>階<rt>かい</rt></ruby>の<ruby>廊下<rt>ろうか</rt></ruby>だ。「リビング」と「キッチン」へ<ruby>続<rt>つづ</rt></ruby>くドアがある。<ruby>正面<rt>しょうめん</rt></ruby>の<ruby>「玄関」<rt>げんかん</rt></ruby>には<ruby>電子<rt>でんし</rt></ruby>ロックがかかっている。<ruby>上<rt>うえ</rt></ruby>は<ruby>「階段」<rt>かいだん</rt></ruby>だ。",
+                handle: (cmd) => {
+                    if (cmd === state.passCode) {
+                        commandInput.disabled = true;
+                        commandInput.style.display = 'none';
+
+                        state.endTime = new Date();
+                        const diff = state.endTime - state.startTime;
+                        const totalSeconds = Math.floor(diff / 1000);
+                        const minutes = Math.floor(totalSeconds / 60);
+                        const seconds = totalSeconds % 60;
+                        const timeMessage = `【クリアタイム: ${minutes}分${seconds}秒】`;
+
+                        setTimeout(async () => {
+                            // ここを "subtitle" にする
+                            await addLog("パスワードが<ruby>一致<rt>いっち</rt></ruby>した！<ruby>玄関<rt>げんかん</rt></ruby>のロックが<ruby>解除<rt>かいじょ</rt></ruby>された！<ruby>脱出成功！<rt>だっしゅつせいこう</rt></ruby>", "subtitle");
+                            await addLog(`<span style='color: #00ff00; font-weight: bold;'>${timeMessage}</span>`);
+                            await addLog("<br><button onclick='location.reload()' class='reset-button'>タイトルへ戻る</button>");
+                        }, 100);
+
+                        return "";
+                    }
+
+                    // 移動や調査の判定（else if でつなぐ）
+                    if (cmd.includes("リビング")) {
+                        state.room = "living";
+                        return "リビングのドアを<ruby>開<rt>あ</rt></ruby>けた。";
+                    }
+                    else if (cmd.includes("キッチン")) {
+                        state.room = "kitchen";
+                        return "キッチンのドアを<ruby>開<rt>あ</rt></ruby>けた。";
+                    }
+                    else if (cmd.includes("階段") || cmd.includes("上る")) {
+                        state.room = "hallway";
+                        return "<ruby>階段<rt>かいだん</rt></ruby>を<ruby>上<rt>あが</rt></ruby>って2<ruby>階<rt>かい</rt></ruby>へ<ruby>戻<rt>もど</rt></ruby>った。";
+                    }
+                    else if (cmd.includes("玄関") || cmd.includes("ロック")) {
+                        return "<ruby>玄関<rt>げんかん</rt></ruby>の<ruby>電子<rt>でんし</rt></ruby>ロックには4<ruby>桁<rt>けた</rt></ruby>の<ruby>数字<rt>すうじ</rt></ruby>が<ruby>必要<rt>ひつよう</rt></ruby>なようだ。<ruby>直接<rt>ちょくせつ</rt></ruby>4<ruby>桁<rt>けた</rt></ruby>の<ruby>数字<rt>すうじ</rt></ruby>を<ruby>入力<rt>にゅうりょく</rt></ruby>してみよう。";
+                    }
+
+                    return null;
+                }
+            },
+            "living": {
+                title: "1F リビング",
+                description: "<ruby>広<rt>ひろ</rt></ruby>いリビングだ。<ruby>壁<rt>かべ</rt></ruby>には<ruby>不気味<rt>ぶきみ</rt></ruby>な<ruby>「絵画」<rt>かいが</rt></ruby>が<ruby>飾<rt>かざ</rt></ruby>られ、<ruby>豪華<rt>ごうか</rt></ruby>な「ソファ」が<ruby>置<rt>お</rt></ruby>かれている。",
+                objects: {
+                    "絵画": "<ruby>不気味<rt>ぶきみ</rt></ruby>な<ruby>肖像画<rt>しょうぞうが</rt></ruby>だ。<ruby>何故<rt>なぜ</rt></ruby>だか<ruby>見<rt>み</rt></ruby>られているような<ruby>気<rt>き</rt></ruby>がする。<ruby>額縁<rt>がくぶち</rt></ruby>の<ruby>裏<rt>うら</rt></ruby>にはへそくりが<ruby>隠<rt>かく</rt></ruby>されていた。『へそくり』をこっそり<ruby>入手<rt>にゅうしゅ</rt></ruby>した。",
+                    "ソファ": "<ruby>高級<rt>こうきゅう</rt></ruby>そうなソファだ。クッションの<ruby>隙間<rt>すきま</rt></ruby>には<ruby>埃<rt>ほこり</rt></ruby>が<ruby>溜<rt>た</rt></ruby>まっている。",
+                    "窓": "<ruby>窓<rt>まど</rt></ruby>には<ruby>格子<rt>こうし</rt></ruby>がはまっていて、<ruby>外<rt>そと</rt></ruby>へ<ruby>出<rt>で</rt></ruby>ることはできない。"
+                },
+                handle: (cmd) => {
+                    for (let key in rooms["living"].objects) {
+                        if (cmd.includes(key)) return rooms["living"].objects[key];
+                    }
+                    if (cmd.includes("廊下") || cmd.includes("戻る")) {
+                        state.room = "hallway1f";
+                        return "<ruby>廊下<rt>ろうか</rt></ruby>へ<ruby>戻<rt>もど</rt></ruby>った。";
+                    }
+                    return null;
+                }
+            },
+            "kitchen": {
+                title: "1F キッチン",
+                description: "<ruby>生活感<rt>せいかつかん</rt></ruby>のあるキッチンだ。<ruby>壁<rt>かべ</rt></ruby>の<ruby>「戸棚」<rt>とだな</rt></ruby>が<ruby>少<rt>すこ</rt></ruby>し<ruby>開<rt>あ</rt></ruby>いている。<ruby>奥<rt>おく</rt></ruby>には<ruby>「冷蔵庫」<rt>れいぞうこ</rt></ruby>があり、さらに<ruby>奥<rt>おく</rt></ruby>には<ruby>「勝手口」<rt>かってぐち</rt></ruby>が<ruby>見<rt>み</rt></ruby>える。",
+                objects: {
+                    "冷蔵庫": () => "<ruby>中<rt>なか</rt></ruby>は<ruby>空<rt>から</rt></ruby>っぽだ。が、なんとも<ruby>言<rt>い</rt></ruby>えない<ruby>匂<rt>にお</rt></ruby>いが<ruby>充満<rt>じゅうまん</rt></ruby>している。",
+                    "戸棚": () => {
+                        if (!state.hasCard) {
+                            state.hasCard = true; // カード入手フラグを立てる
+                            return "<ruby>古<rt>ふる</rt></ruby>い<ruby>食器<rt>しょっき</rt></ruby>の<ruby>影<rt>かげ</rt></ruby>に、プラスチック<ruby>製<rt>せい</rt></ruby>の「カード」が<ruby>落<rt>お</rt></ruby>ちていた！『プラスチックのカード』を<ruby>入手<rt>にゅうしゅ</rt></ruby>した。";
+                        }
+                        return "<ruby>戸棚<rt>とだな</rt></ruby>にはもう<ruby>古<rt>ふる</rt></ruby>い<ruby>食器<rt>しょっき</rt></ruby>しか<ruby>残<rt>のこ</rt></ruby>っていない。";
+                    },
+                    "カード": () => state.hasCard ? "<ruby>手<rt>て</rt></ruby>に<ruby>入<rt>い</rt></ruby>れたプラスチックのカードだ。<ruby>何<rt>なに</rt></ruby>かに<ruby>使<rt>つか</rt></ruby>えるかもしれない。" : "<ruby>戸棚<rt>とだな</rt></ruby>の<ruby>中<rt>なか</rt></ruby>に<ruby>何<rt>なに</rt></ruby>か<ruby>見<rt>み</rt></ruby>える……。",
+                    "勝手口": () => "<ruby>扉<rt>とびら</rt></ruby>の<ruby>外側<rt>そとがわ</rt></ruby>に<ruby>何<rt>なに</rt></ruby>かが<ruby>置<rt>お</rt></ruby>いてあるようだ。ここからは<ruby>出<rt>で</rt></ruby>られそうにない。"
+                },
+                handle: (cmd) => {
+                    // オブジェクトの調査
+                    for (let key in rooms["kitchen"].objects) {
+                        if (cmd.includes(key)) {
+                            const res = rooms["kitchen"].objects[key];
+                            return typeof res === "function" ? res() : res;
+                        }
+                    }
+
+                    // 移動の処理
+                    if (cmd.includes("戻る") || cmd.includes("リビング") || cmd.includes("廊下")) {
+                        state.room = "hallway1f";
+                        return "1<ruby>階<rt>かい</rt></ruby>の<ruby>廊下<rt>ろうか</rt></ruby>へ<ruby>戻<rt>もど</rt></ruby>った。";
+                    }
+
+                    return null;
+                }
+            }
+        };
+
+        // --- エンジン部分 ---
+        function highlightKeywords(text) {
+            // 正規表現を使って 「」 で囲まれた部分を <span class="highlight">...</span> に置き換える
+            // gは「すべて」、()は「グループ化」を意味します
+            return text.replace(/「(.*?)」/g, '<span class="highlight">「$1」</span>');
+        }
+
+        async function addLog(text, type = "") {
+            const div = document.createElement('div');
+
+            if (type === "subtitle") {
+                div.className = 'subtitle-narration';
+            } else {
+                div.className = 'message-line';
+            }
+
+            // ここで色分け処理を呼び出す
+            const formattedText = highlightKeywords(text);
+
+            div.innerHTML = formattedText;
+
+            logDisplay.appendChild(div);
+
+            logDisplay.scrollTo({
+                top: logDisplay.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        async function showRoomInfo() {
+            const r = rooms[state.room];
+            // 第二引数に "subtitle" を入れる
+            await addLog(`【${r.title}】\n${r.description}`, "subtitle");
+        }
+
+        async function executeCommand(input) {
+            const cmd = toHalfWidth(input.trim());
+            if (!cmd) return;
+
+            await addLog(`<p class="user-cmd">> ${input}</p>`);
+
+            const currentRoom = rooms[state.room];
+            const oldRoom = state.room;
+
+            if (cmd === "見る" || cmd === "周りを見る" || cmd === "調べる") {
+                await showRoomInfo();
+                return;
+            }
+
+            const response = currentRoom.handle(cmd);
+
+            if (response === "") {
+                return;
+            }
+
+            if (response) {
+                await addLog(response);
+                if (state.room !== oldRoom) {
+                    await showRoomInfo();
+                }
+            } else {
+                const target = cmd.replace(/を?調べる|を?見る|を?チェック|に?行く|へ?行く/g, "").trim();
+                if (target === "") {
+                    await showRoomInfo();
+                } else {
+                    await addLog(`「${target}」については、特に何もなさそうだ。`);
+                }
+            }
+
+            if (!commandInput.disabled) {
+                commandInput.focus();
+            }
+        }
+
+        // --- イベントリスナー ---
+        startButton.addEventListener('click', () => {
+            titleScreen.style.display = 'none';
+            gameContent.style.display = 'block';
+
+            state.startTime = new Date();
+
+            showRoomInfo();
+            commandInput.focus();
+        });
+
+        commandInput.addEventListener('keydown', async (e) => {
+            if (e.key === 'Enter') {
+                const val = commandInput.value;
+                commandInput.value = '';
+                await executeCommand(val);
+            }
+        });
+    </script>
+</body>
+
+</html>
