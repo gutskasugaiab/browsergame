@@ -23,6 +23,7 @@ header {
     text-align: center;
     align-items: center;
     width: 75%;
+    margin: 0;
 }
 
 .nav li {
@@ -33,6 +34,7 @@ header {
 .nav a {
     margin-left: 15px;
     color: #fff;
+    font-weight: bold;
     text-decoration: none;
 }
 
