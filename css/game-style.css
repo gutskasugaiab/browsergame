@@ -130,21 +130,9 @@ iframe {
     margin: 20px 0;
 }
 
-.ad-banner img {
-    width: 100%;
-    max-width: 728px;
-    height: auto;
-    border-radius: 10px;
-}
-
 /* サイド広告 */
 .side-ad {
     margin-bottom: 20px;
-}
-
-.side-ad img {
-    width: 100%;
-    border-radius: 10px;
 }
 
 .ad-label {
