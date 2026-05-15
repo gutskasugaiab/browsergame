@@ -199,11 +199,10 @@ footer a {
     margin: 20px 0;
 }
 
-.ad-banner img {
+.ad-banner a img {
     width: 100%;
     max-width: 728px;
-    height: auto;
-    border-radius: 10px;
+    height: 90px;
 }
 
 /* 広告カード */
